@@ -26,8 +26,8 @@ class Segment(ClusterableModel):
     disable_date = models.DateTimeField(null=True, editable=False)
     visit_count = models.PositiveIntegerField(default=0, editable=False)
     STATUS_CHOICES = (
-        ('enabled', 'Enabled'),
-        ('disabled', 'Disabled'),
+        ('enabled', _('Enabled')),
+        ('disabled', _('Disabled')),
     )
     status = models.CharField(max_length=20, choices=STATUS_CHOICES,
                               default="enabled")
@@ -53,7 +53,7 @@ class Segment(ClusterableModel):
                     "{}_related".format(rule._meta.db_table),
                     label=rule.__str__,
                 ) for rule in AbstractBaseRule.__subclasses__()
-            ], heading="Rules"),
+            ], heading=_("Rules")),
         ]
 
         super(Segment, self).__init__(*args, **kwargs)

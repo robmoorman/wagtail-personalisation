@@ -43,7 +43,7 @@ class AbstractBaseRule(models.Model):
         """
         description = {
             'title': _('Abstract segmentation rule'),
-            'value': _(''),
+            'value': '',
         }
 
         return description
