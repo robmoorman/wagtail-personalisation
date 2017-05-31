@@ -12,7 +12,7 @@ from wagtail.wagtailcore import hooks
 
 from wagtail_personalisation import admin_urls
 from wagtail_personalisation.app_settings import segments_adapter
-from wagtail_personalisation.models import PersonalisablePage, Segment
+from wagtail_personalisation.models import AbstractPersonalisablePage, Segment
 from wagtail_personalisation.utils import impersonate_other_page
 
 logger = logging.getLogger(__name__)
@@ -139,9 +139,10 @@ def _check_for_variations(segments, page):
     :rtype: wagtail_personalisation.models.PersonalisablePage or None
 
     """
+    model = AbstractPersonalisablePage.get_model()
     for segment in segments:
         page_class = page.__class__
-        if any(item == PersonalisablePage for item in page_class.__bases__):
+        if any(item == model for item in page_class.__bases__):
 
             variation = page_class.objects.filter(
                 canonical_page=page, segment=segment)
@@ -158,7 +159,8 @@ def page_listing_variant_buttons(page, page_perms, is_parent=False):
     the page (if any) and a 'Create a new variant' button.
 
     """
-    personalisable_page = PersonalisablePage.objects.filter(pk=page.pk)
+    model = AbstractPersonalisablePage.get_model()
+    personalisable_page = model.objects.filter(pk=page.pk)
     segments = Segment.objects.all()
 
     if personalisable_page and len(segments) > 0 and not (
@@ -179,10 +181,11 @@ def page_listing_more_buttons(page, page_perms, is_parent=False):
     create a new variant for the selected segment.
 
     """
+    model = AbstractPersonalisablePage.get_model()
     segments = Segment.objects.all()
     available_segments = [
         item for item in segments
-        if not PersonalisablePage.objects.filter(segment=item, pk=page.pk)
+        if not model.objects.filter(segment=item, pk=page.pk)
     ]
 
     for segment in available_segments:
